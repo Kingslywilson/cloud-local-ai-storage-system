@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Details - Cloud Storage</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- GLOBAL SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">☁️</div>
+        <span class="sidebar-brand-text">CloudVault AI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item" id="nav-dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="files.html" class="nav-item" id="nav-files">
+          <span class="nav-icon">📁</span>
+          <span>All Files</span>
+        </a>
+        <a href="upload.html" class="nav-item" id="nav-upload">
+          <span class="nav-icon">📤</span>
+          <span>Upload</span>
+        </a>
+        <a href="folders.html" class="nav-item" id="nav-folders">
+          <span class="nav-icon">📂</span>
+          <span>Folders</span>
+        </a>
+        <a href="shared.html" class="nav-item" id="nav-shared">
+          <span class="nav-icon">🔗</span>
+          <span>Shared Files</span>
+        </a>
+        <a href="storage.html" class="nav-item" id="nav-storage">
+          <span class="nav-icon">💾</span>
+          <span>Storage</span>
+        </a>
+        <a href="activity.html" class="nav-item" id="nav-activity">
+          <span class="nav-icon">📜</span>
+          <span>Activity</span>
+        </a>
+        <a href="profile.html" class="nav-item" id="nav-profile">
+          <span class="nav-icon">👤</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button type="button" class="logout-btn" id="logout-btn">
+          <span>🚪</span> Log Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <!-- GLOBAL TOP BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="sidebar-toggle" id="sidebar-toggle">☰</button>
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="global-search" class="search-input" placeholder="Search files...">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="icon-btn" id="notification-btn" title="Notifications">🔔</button>
+          <div class="user-profile-menu" id="user-menu" onclick="window.location.href='profile.html'">
+            <div class="user-avatar">U</div>
+            <span class="user-name-text" id="user-name">Loading...</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT BODY -->
+      <main class="content-body">
+        <div style="margin-bottom: 1rem;">
+          <a href="files.html" style="color:var(--primary); text-decoration:none; font-weight:600;">← Back to All Files</a>
+        </div>
+
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="file-name">Loading file details...</h1>
+            <p class="page-subtitle">File preview and Gemini AI analysis summary.</p>
+          </div>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button type="button" class="btn btn-primary" id="download-file-btn">⬇️ Download</button>
+            <button type="button" class="btn btn-secondary" id="rename-file-btn">✏️ Rename</button>
+            <button type="button" class="btn btn-secondary" id="move-file-btn">📁 Move</button>
+            <button type="button" class="btn btn-secondary" id="share-file-btn">🔗 Share Link</button>
+            <button type="button" class="btn btn-danger" id="delete-file-btn">🗑️ Delete</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- MEDIA PREVIEW & METADATA CARD -->
+          <div class="stat-card" style="display:block;">
+            <h3 style="font-size:1.1rem; font-weight:700; color:var(--text-main); margin-bottom:1rem;">File Preview</h3>
+            
+            <div id="media-preview" class="media-container">
+              <img id="image-preview" src="" alt="Image Preview" style="display:none;">
+              <audio id="audio-preview" controls style="display:none;"></audio>
+              <video id="video-preview" controls style="display:none;"></video>
+            </div>
+
+            <h4 style="font-size:0.9rem; font-weight:600; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.75rem;">File Metadata</h4>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; font-size:0.9rem;">
+              <div><strong style="color:var(--text-muted);">Type:</strong> <span id="file-type">-</span></div>
+              <div><strong style="color:var(--text-muted);">Size:</strong> <span id="file-size">-</span></div>
+              <div><strong style="color:var(--text-muted);">Folder:</strong> <span id="file-folder">-</span></div>
+              <div><strong style="color:var(--text-muted);">Uploaded:</strong> <span id="file-uploaded">-</span></div>
+            </div>
+          </div>
+
+          <!-- AI ANALYSIS CARD SECTION -->
+          <div id="ai-analysis-section">
+            <div class="ai-card" style="margin-top:0;">
+              <div class="ai-card-header">
+                <span class="ai-sparkle-icon">✨</span>
+                <h3 class="ai-title">AI File Analysis</h3>
+              </div>
+
+              <div class="ai-section-title">Summary</div>
+              <p id="ai-summary" style="font-size:0.95rem; color:var(--text-main); line-height:1.6;">Loading AI summary...</p>
+
+              <div class="ai-section-title">Detailed Description</div>
+              <p id="ai-description" style="font-size:0.9rem; color:var(--text-muted); line-height:1.6;">Loading AI description...</p>
+
+              <div class="ai-section-title">Smart Tags</div>
+              <div id="ai-tags" class="ai-tags-container"></div>
+
+              <div class="ai-section-title">Insights & Key Takeaways</div>
+              <p id="ai-insights" style="font-size:0.9rem; color:var(--text-muted); line-height:1.6;">Loading AI insights...</p>
+
+              <div style="font-size:0.75rem; color:var(--text-dim); margin-top:1.5rem;">
+                Analyzed at: <span id="ai-created-at">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/file-details.js"></script>
+</body>
+</html>

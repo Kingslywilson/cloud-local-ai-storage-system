@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Cloud Storage</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- GLOBAL SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">☁️</div>
+        <span class="sidebar-brand-text">CloudVault AI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item active" id="nav-dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="files.html" class="nav-item" id="nav-files">
+          <span class="nav-icon">📁</span>
+          <span>All Files</span>
+        </a>
+        <a href="upload.html" class="nav-item" id="nav-upload">
+          <span class="nav-icon">📤</span>
+          <span>Upload</span>
+        </a>
+        <a href="folders.html" class="nav-item" id="nav-folders">
+          <span class="nav-icon">📂</span>
+          <span>Folders</span>
+        </a>
+        <a href="shared.html" class="nav-item" id="nav-shared">
+          <span class="nav-icon">🔗</span>
+          <span>Shared Files</span>
+        </a>
+        <a href="storage.html" class="nav-item" id="nav-storage">
+          <span class="nav-icon">💾</span>
+          <span>Storage</span>
+        </a>
+        <a href="activity.html" class="nav-item" id="nav-activity">
+          <span class="nav-icon">📜</span>
+          <span>Activity</span>
+        </a>
+        <a href="profile.html" class="nav-item" id="nav-profile">
+          <span class="nav-icon">👤</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button type="button" class="logout-btn" id="logout-btn">
+          <span>🚪</span> Log Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <!-- GLOBAL TOP BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="sidebar-toggle" id="sidebar-toggle">☰</button>
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="global-search" class="search-input" placeholder="Search files, tags, or documents...">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="icon-btn" id="notification-btn" title="Notifications">🔔</button>
+          <div class="user-profile-menu" id="user-menu" onclick="window.location.href='profile.html'">
+            <div class="user-avatar">U</div>
+            <span class="user-name-text" id="user-name">Loading...</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT BODY -->
+      <main class="content-body">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="welcome-text">Welcome back!</h1>
+            <p class="page-subtitle">Here is an overview of your storage space and AI file analysis.</p>
+          </div>
+          <div style="display:flex; gap:0.75rem;">
+            <a href="upload.html" class="btn btn-primary" id="upload-file-btn">📤 Upload File</a>
+            <a href="folders.html" class="btn btn-secondary" id="create-folder-btn">📂 New Folder</a>
+          </div>
+        </div>
+
+        <div id="dashboard-loading" class="state-box" style="display:none;">
+          <div class="spinner"></div>
+          <p>Loading dashboard metrics...</p>
+        </div>
+
+        <!-- STAT METRIC CARDS -->
+        <div class="grid-4">
+          <div class="stat-card">
+            <div class="stat-icon">📄</div>
+            <div class="stat-info">
+              <div class="stat-label">Total Files</div>
+              <div class="stat-value" id="card-total-files">0</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon purple">📂</div>
+            <div class="stat-info">
+              <div class="stat-label">Total Folders</div>
+              <div class="stat-value" id="card-total-folders">0</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">🔗</div>
+            <div class="stat-info">
+              <div class="stat-label">Shared Items</div>
+              <div class="stat-value" id="card-shared-files">0</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon amber">💾</div>
+            <div class="stat-info">
+              <div class="stat-label">Storage Used</div>
+              <div class="stat-value" id="card-storage-used">0 MB</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STORAGE PROGRESS CARD -->
+        <div class="stat-card" style="margin-bottom: 2rem; display:block;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span style="font-weight:600; font-size:1rem; color:var(--text-main);">Cloud Capacity Usage</span>
+              <span style="font-size:0.85rem; color:var(--text-muted); margin-left:0.5rem;" id="storage-percentage">0%</span>
+            </div>
+            <div style="font-size:0.875rem; color:var(--text-muted);">
+              <span id="storage-used">0 MB</span> / <span id="storage-total">15 GB</span>
+            </div>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="storage-progress" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- RECENT UPLOADS TABLE -->
+        <div class="card-table">
+          <div class="table-header">
+            <h2 class="table-title">Recent Files</h2>
+            <a href="files.html" class="btn btn-secondary" id="view-all-files-btn" style="padding: 0.4rem 0.85rem; font-size:0.85rem;">
+              View All Files →
+            </a>
+          </div>
+
+          <div class="table-wrapper">
+            <table id="recent-files-table">
+              <thead>
+                <tr>
+                  <th>File</th>
+                  <th>Type</th>
+                  <th>Size</th>
+                  <th>Folder</th>
+                  <th>Uploaded</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Populated dynamically by dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const globalSearch = document.getElementById("global-search");
+      if (globalSearch) {
+        globalSearch.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && globalSearch.value.trim()) {
+            window.location.href = `files.html?search=${encodeURIComponent(globalSearch.value.trim())}`;
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

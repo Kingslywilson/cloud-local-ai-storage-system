@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Cloud Storage</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-brand">
+          <div class="auth-logo-icon">☁️</div>
+          <span style="font-weight:700; font-size:1.4rem; color:var(--text-main);">CloudVault AI</span>
+        </div>
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Get 15 GB of free AI-powered cloud storage</p>
+      </div>
+
+      <div id="register-error" class="alert alert-danger" style="display: none;"></div>
+      <div id="register-success" class="alert alert-success" style="display: none;"></div>
+      <div id="register-loading" class="state-box" style="display: none; padding: 1rem 0;">
+        <div class="spinner"></div>
+        <p style="font-size: 0.85rem;">Creating your account...</p>
+      </div>
+
+      <form id="register-form">
+        <div class="form-group">
+          <label for="register-name" class="form-label">Full Name</label>
+          <input type="text" id="register-name" class="form-control" placeholder="John Doe" required autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label for="register-email" class="form-label">Email Address</label>
+          <input type="email" id="register-email" class="form-control" placeholder="name@company.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="register-password" class="form-label">Password</label>
+          <input type="password" id="register-password" class="form-control" placeholder="At least 6 characters" required autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+          <label for="register-confirm-password" class="form-label">Confirm Password</label>
+          <input type="password" id="register-confirm-password" class="form-control" placeholder="Repeat password" required autocomplete="new-password">
+        </div>
+
+        <button type="submit" id="register-submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+          Register Account
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="index.html">Sign In</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      redirectIfLoggedIn();
+
+      const registerForm = document.getElementById("register-form");
+      const registerName = document.getElementById("register-name");
+      const registerEmail = document.getElementById("register-email");
+      const registerPassword = document.getElementById("register-password");
+      const registerConfirmPassword = document.getElementById("register-confirm-password");
+      const registerSubmit = document.getElementById("register-submit");
+
+      const registerError = document.getElementById("register-error");
+      const registerSuccess = document.getElementById("register-success");
+      const registerLoading = document.getElementById("register-loading");
+
+      registerForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        registerError.style.display = "none";
+        registerSuccess.style.display = "none";
+
+        const name = registerName.value.trim();
+        const email = registerEmail.value.trim();
+        const password = registerPassword.value;
+        const confirmPassword = registerConfirmPassword.value;
+
+        // Validation
+        if (!name) {
+          showError("Name is required.");
+          return;
+        }
+
+        if (!email || !email.includes("@")) {
+          showError("Valid email address is required.");
+          return;
+        }
+
+        if (!password || password.length < 4) {
+          showError("Password must be at least 4 characters long.");
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          showError("Passwords do not match.");
+          return;
+        }
+
+        registerLoading.style.display = "block";
+        registerSubmit.disabled = true;
+
+        try {
+          await apiPost("/auth/register", {
+            name: name,
+            email: email,
+            password: password
+          });
+
+          registerSuccess.textContent = "Registration successful! Redirecting to login...";
+          registerSuccess.style.display = "flex";
+          showToast("Account created successfully", "success");
+
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1500);
+
+        } catch (err) {
+          showError(err.message || "Registration failed. Email may already be registered.");
+        } finally {
+          registerLoading.style.display = "none";
+          registerSubmit.disabled = false;
+        }
+      });
+
+      function showError(msg) {
+        registerError.textContent = msg;
+        registerError.style.display = "flex";
+      }
+    });
+  </script>
+</body>
+</html>

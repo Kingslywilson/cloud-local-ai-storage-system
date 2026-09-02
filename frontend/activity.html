@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity History - Cloud Storage</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- GLOBAL SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">☁️</div>
+        <span class="sidebar-brand-text">CloudVault AI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item" id="nav-dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="files.html" class="nav-item" id="nav-files">
+          <span class="nav-icon">📁</span>
+          <span>All Files</span>
+        </a>
+        <a href="upload.html" class="nav-item" id="nav-upload">
+          <span class="nav-icon">📤</span>
+          <span>Upload</span>
+        </a>
+        <a href="folders.html" class="nav-item" id="nav-folders">
+          <span class="nav-icon">📂</span>
+          <span>Folders</span>
+        </a>
+        <a href="shared.html" class="nav-item" id="nav-shared">
+          <span class="nav-icon">🔗</span>
+          <span>Shared Files</span>
+        </a>
+        <a href="storage.html" class="nav-item" id="nav-storage">
+          <span class="nav-icon">💾</span>
+          <span>Storage</span>
+        </a>
+        <a href="activity.html" class="nav-item active" id="nav-activity">
+          <span class="nav-icon">📜</span>
+          <span>Activity</span>
+        </a>
+        <a href="profile.html" class="nav-item" id="nav-profile">
+          <span class="nav-icon">👤</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button type="button" class="logout-btn" id="logout-btn">
+          <span>🚪</span> Log Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <!-- GLOBAL TOP BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="sidebar-toggle" id="sidebar-toggle">☰</button>
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="global-search" class="search-input" placeholder="Search files...">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="icon-btn" id="notification-btn" title="Notifications">🔔</button>
+          <div class="user-profile-menu" id="user-menu" onclick="window.location.href='profile.html'">
+            <div class="user-avatar">U</div>
+            <span class="user-name-text" id="user-name">Loading...</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT BODY -->
+      <main class="content-body">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Activity History</h1>
+            <p class="page-subtitle">Track file uploads, shares, downloads, and AI operations.</p>
+          </div>
+        </div>
+
+        <div id="activity-loading" class="state-box" style="display:none;">
+          <div class="spinner"></div>
+          <p>Loading activity logs...</p>
+        </div>
+
+        <!-- ACTIVITY TABLE CARD -->
+        <div class="card-table">
+          <div class="table-wrapper">
+            <table id="activity-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>File</th>
+                  <th>Date</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Activity records populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="activity-empty" class="state-box" style="display:none; background:var(--bg-surface); border-radius:var(--radius-lg); border:1px solid var(--border-color);">
+          <div class="state-icon">📜</div>
+          <p style="font-weight:600; font-size:1.1rem; color:var(--text-main);">Activity history unavailable</p>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem;">Activity log tracking will become active once backend logging endpoint is enabled.</p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/activity.js"></script>
+</body>
+</html>

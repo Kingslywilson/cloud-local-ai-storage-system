@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Storage Analytics - Cloud Storage</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- GLOBAL SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">☁️</div>
+        <span class="sidebar-brand-text">CloudVault AI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item" id="nav-dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="files.html" class="nav-item" id="nav-files">
+          <span class="nav-icon">📁</span>
+          <span>All Files</span>
+        </a>
+        <a href="upload.html" class="nav-item" id="nav-upload">
+          <span class="nav-icon">📤</span>
+          <span>Upload</span>
+        </a>
+        <a href="folders.html" class="nav-item" id="nav-folders">
+          <span class="nav-icon">📂</span>
+          <span>Folders</span>
+        </a>
+        <a href="shared.html" class="nav-item" id="nav-shared">
+          <span class="nav-icon">🔗</span>
+          <span>Shared Files</span>
+        </a>
+        <a href="storage.html" class="nav-item active" id="nav-storage">
+          <span class="nav-icon">💾</span>
+          <span>Storage</span>
+        </a>
+        <a href="activity.html" class="nav-item" id="nav-activity">
+          <span class="nav-icon">📜</span>
+          <span>Activity</span>
+        </a>
+        <a href="profile.html" class="nav-item" id="nav-profile">
+          <span class="nav-icon">👤</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button type="button" class="logout-btn" id="logout-btn">
+          <span>🚪</span> Log Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <!-- GLOBAL TOP BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="sidebar-toggle" id="sidebar-toggle">☰</button>
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="global-search" class="search-input" placeholder="Search files...">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="icon-btn" id="notification-btn" title="Notifications">🔔</button>
+          <div class="user-profile-menu" id="user-menu" onclick="window.location.href='profile.html'">
+            <div class="user-avatar">U</div>
+            <span class="user-name-text" id="user-name">Loading...</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT BODY -->
+      <main class="content-body">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Storage Analytics</h1>
+            <p class="page-subtitle">Detailed breakdown of cloud storage usage and file categories.</p>
+          </div>
+        </div>
+
+        <!-- STAT OVERVIEW CARDS -->
+        <div class="grid-4">
+          <div class="stat-card">
+            <div class="stat-icon">💾</div>
+            <div class="stat-info">
+              <div class="stat-label">Total Allocated</div>
+              <div class="stat-value" id="storage-total">15 GB</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon purple">📊</div>
+            <div class="stat-info">
+              <div class="stat-label">Used Storage</div>
+              <div class="stat-value" id="storage-used">0 MB</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">🌱</div>
+            <div class="stat-info">
+              <div class="stat-label">Remaining Space</div>
+              <div class="stat-value" id="storage-remaining">15 GB</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon amber">📦</div>
+            <div class="stat-info">
+              <div class="stat-label">Stored Files</div>
+              <div class="stat-value" id="storage-file-count">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- USAGE BAR CARD -->
+        <div class="stat-card" style="display:block; margin-bottom:2rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <h3 style="font-size:1.1rem; font-weight:700; color:var(--text-main);">Overall Capacity Used</h3>
+            <span style="font-weight:700; color:var(--primary); font-size:1.2rem;" id="storage-percentage">0%</span>
+          </div>
+          <div class="progress-bar-bg" style="height:12px;">
+            <div class="progress-bar-fill" id="storage-progress" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- CATEGORY BREAKDOWN LIST CARD -->
+        <div class="card-table" style="padding:1.5rem;">
+          <h3 style="font-size:1.1rem; font-weight:700; color:var(--text-main); margin-bottom:1.5rem;">File Category Distribution</h3>
+
+          <div style="display:flex; flex-direction:column; gap:1.25rem;">
+            <!-- DOCUMENTS -->
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem; font-size:0.9rem;">
+                <span style="font-weight:600;">📄 Documents (PDF, DOCX, TXT, CSV)</span>
+                <span id="breakdown-doc-size" style="color:var(--text-muted);">0 KB</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div id="breakdown-doc-bar" class="progress-bar-fill" style="width:0%; background:var(--primary);"></div>
+              </div>
+            </div>
+
+            <!-- IMAGES -->
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem; font-size:0.9rem;">
+                <span style="font-weight:600;">🖼️ Images (JPG, PNG, WEBP, GIF)</span>
+                <span id="breakdown-img-size" style="color:var(--text-muted);">0 KB</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div id="breakdown-img-bar" class="progress-bar-fill" style="width:0%; background:var(--ai-purple);"></div>
+              </div>
+            </div>
+
+            <!-- VIDEOS -->
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem; font-size:0.9rem;">
+                <span style="font-weight:600;">🎬 Videos (MP4, MOV, AVI, MKV)</span>
+                <span id="breakdown-video-size" style="color:var(--text-muted);">0 KB</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div id="breakdown-video-bar" class="progress-bar-fill" style="width:0%; background:var(--ai-pink);"></div>
+              </div>
+            </div>
+
+            <!-- AUDIO -->
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem; font-size:0.9rem;">
+                <span style="font-weight:600;">🎵 Audio (MP3, WAV, M4A, FLAC)</span>
+                <span id="breakdown-audio-size" style="color:var(--text-muted);">0 KB</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div id="breakdown-audio-bar" class="progress-bar-fill" style="width:0%; background:var(--success);"></div>
+              </div>
+            </div>
+
+            <!-- OTHER -->
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem; font-size:0.9rem;">
+                <span style="font-weight:600;">📦 Other & Archives</span>
+                <span id="breakdown-other-size" style="color:var(--text-muted);">0 KB</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div id="breakdown-other-bar" class="progress-bar-fill" style="width:0%; background:var(--warning);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/storage.js"></script>
+</body>
+</html>

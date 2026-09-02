@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload File - Cloud Storage</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- GLOBAL SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">☁️</div>
+        <span class="sidebar-brand-text">CloudVault AI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item" id="nav-dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="files.html" class="nav-item" id="nav-files">
+          <span class="nav-icon">📁</span>
+          <span>All Files</span>
+        </a>
+        <a href="upload.html" class="nav-item active" id="nav-upload">
+          <span class="nav-icon">📤</span>
+          <span>Upload</span>
+        </a>
+        <a href="folders.html" class="nav-item" id="nav-folders">
+          <span class="nav-icon">📂</span>
+          <span>Folders</span>
+        </a>
+        <a href="shared.html" class="nav-item" id="nav-shared">
+          <span class="nav-icon">🔗</span>
+          <span>Shared Files</span>
+        </a>
+        <a href="storage.html" class="nav-item" id="nav-storage">
+          <span class="nav-icon">💾</span>
+          <span>Storage</span>
+        </a>
+        <a href="activity.html" class="nav-item" id="nav-activity">
+          <span class="nav-icon">📜</span>
+          <span>Activity</span>
+        </a>
+        <a href="profile.html" class="nav-item" id="nav-profile">
+          <span class="nav-icon">👤</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button type="button" class="logout-btn" id="logout-btn">
+          <span>🚪</span> Log Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <!-- GLOBAL TOP BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="sidebar-toggle" id="sidebar-toggle">☰</button>
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="global-search" class="search-input" placeholder="Search files...">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" class="icon-btn" id="notification-btn" title="Notifications">🔔</button>
+          <div class="user-profile-menu" id="user-menu" onclick="window.location.href='profile.html'">
+            <div class="user-avatar">U</div>
+            <span class="user-name-text" id="user-name">Loading...</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT BODY -->
+      <main class="content-body">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Upload File</h1>
+            <p class="page-subtitle">Upload documents, code, images, audio, or video files for automatic Gemini AI analysis.</p>
+          </div>
+        </div>
+
+        <div style="max-width: 800px; margin: 0 auto;">
+          <form id="upload-form" class="stat-card" style="display:block; padding: 2rem;">
+            <!-- DRAG & DROP ZONE -->
+            <div class="dropzone" id="dropzone">
+              <div class="dropzone-icon">☁️</div>
+              <h3 style="font-size:1.2rem; font-weight:600; color:var(--text-main); margin-bottom:0.5rem;">
+                Drag & Drop files here, or click to browse
+              </h3>
+              <p id="selected-file-text" style="font-size:0.875rem; color:var(--text-muted);">
+                Supports PDF, DOCX, TXT, CSV, Code, Images, Audio, & Video
+              </p>
+              <input type="file" id="file-input" style="display:none;" required>
+            </div>
+
+            <!-- FOLDER SELECTOR -->
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label for="folder-select" class="form-label">Destination Folder (Optional)</label>
+              <select id="folder-select" class="form-control">
+                <option value="">Root Storage (No Folder)</option>
+              </select>
+            </div>
+
+            <!-- UPLOAD BUTTON -->
+            <button type="submit" id="upload-submit" class="btn btn-primary btn-block">
+              🚀 Start Upload & AI Analysis
+            </button>
+          </form>
+
+          <!-- UPLOAD PROGRESS -->
+          <div id="upload-progress" class="stat-card" style="display:none; margin-top:1.5rem; display:block;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+              <span id="upload-status" style="font-weight:600; font-size:0.9rem;">Uploading file...</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="upload-progress-bar" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- UPLOAD RESULT BOX -->
+          <div id="upload-result" class="stat-card" style="display:none; margin-top:1.5rem; display:block; border-color:var(--success);">
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+              <span style="font-size:1.5rem;">✅</span>
+              <h3 style="font-size:1.1rem; font-weight:700; color:var(--success);">Upload Successful</h3>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; font-size:0.9rem;">
+              <div><strong>File ID:</strong> <span id="uploaded-file-id">-</span></div>
+              <div><strong>File Name:</strong> <span id="uploaded-file-name">-</span></div>
+              <div><strong>Type:</strong> <span id="uploaded-file-type">-</span></div>
+              <div><strong>Size:</strong> <span id="uploaded-file-size">-</span></div>
+            </div>
+          </div>
+
+          <!-- AI ANALYSIS LOADING -->
+          <div id="ai-loading" class="state-box" style="display:none; margin-top:1.5rem;">
+            <div class="spinner"></div>
+            <p style="font-weight:600; color:var(--ai-purple);">Gemini AI is reading and analyzing content...</p>
+          </div>
+
+          <div id="ai-error" class="alert alert-danger" style="display:none; margin-top:1.5rem;"></div>
+
+          <!-- AI RESULT CARD -->
+          <div id="ai-result" class="ai-card" style="display:none;">
+            <div class="ai-card-header">
+              <span class="ai-sparkle-icon">✨</span>
+              <h3 class="ai-title">AI File Analysis</h3>
+            </div>
+
+            <div class="ai-section-title">Summary</div>
+            <p id="ai-summary" style="font-size:0.95rem; color:var(--text-main); line-height:1.6;">-</p>
+
+            <div class="ai-section-title">Detailed Description</div>
+            <p id="ai-description" style="font-size:0.9rem; color:var(--text-muted); line-height:1.6;">-</p>
+
+            <div class="ai-section-title">Smart Tags</div>
+            <div id="ai-tags" class="ai-tags-container"></div>
+
+            <div class="ai-section-title">Key Insights</div>
+            <p id="ai-insights" style="font-size:0.9rem; color:var(--text-muted); line-height:1.6;">-</p>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/upload.js"></script>
+</body>
+</html>

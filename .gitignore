@@ -1,0 +1,14 @@
+.env
+backend/.env
+venv/
+backend/venv/
+__pycache__/
+*.pyc
+node_modules/
+uploads/
+backend/uploads/
+.idea/
+.vscode/
+*.log
+*.db
+

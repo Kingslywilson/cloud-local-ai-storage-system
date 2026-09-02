@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Cloud Storage</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-brand">
+          <div class="auth-logo-icon">☁️</div>
+          <span style="font-weight:700; font-size:1.4rem; color:var(--text-main);">CloudVault AI</span>
+        </div>
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-subtitle">Log in to your AI-enhanced cloud storage account</p>
+      </div>
+
+      <div id="login-error" class="alert alert-danger" style="display: none;"></div>
+      <div id="login-loading" class="state-box" style="display: none; padding: 1rem 0;">
+        <div class="spinner"></div>
+        <p style="font-size: 0.85rem;">Authenticating...</p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email" class="form-label">Email Address</label>
+          <input type="email" id="login-email" class="form-control" placeholder="name@company.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="login-password" class="form-label">Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" id="login-submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+          Log In
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="register.html" id="register-link">Create an account</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      redirectIfLoggedIn();
+
+      const loginForm = document.getElementById("login-form");
+      const loginEmail = document.getElementById("login-email");
+      const loginPassword = document.getElementById("login-password");
+      const loginSubmit = document.getElementById("login-submit");
+      const loginError = document.getElementById("login-error");
+      const loginLoading = document.getElementById("login-loading");
+
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        loginError.style.display = "none";
+        loginLoading.style.display = "block";
+        loginSubmit.disabled = true;
+
+        const email = loginEmail.value.trim();
+        const password = loginPassword.value;
+
+        try {
+          const response = await apiPost("/auth/login", {
+            email: email,
+            password: password
+          });
+
+          if (response && response.access_token) {
+            localStorage.setItem("access_token", response.access_token);
+            showToast("Login successful!", "success");
+            setTimeout(() => {
+              window.location.href = "dashboard.html";
+            }, 400);
+          } else {
+            throw new Error("Invalid response from server");
+          }
+        } catch (err) {
+          loginError.textContent = err.message || "Invalid email or password.";
+          loginError.style.display = "flex";
+        } finally {
+          loginLoading.style.display = "none";
+          loginSubmit.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
