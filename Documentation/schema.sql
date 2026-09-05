@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS file_shares (
     INDEX idx_shares_file (file_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 5. AI Analysis Table
+-- 5. AI & ML Analysis Table
 CREATE TABLE IF NOT EXISTS ai_analysis (
     id INT AUTO_INCREMENT PRIMARY KEY,
     file_id INT NOT NULL,
@@ -69,6 +69,11 @@ CREATE TABLE IF NOT EXISTS ai_analysis (
     description VARCHAR(2000) DEFAULT NULL,
     tags VARCHAR(1000) DEFAULT NULL,
     insights VARCHAR(3000) DEFAULT NULL,
+    ml_category VARCHAR(100) DEFAULT NULL,
+    ml_confidence FLOAT DEFAULT NULL,
+    is_suspicious INT DEFAULT 0,
+    suspicious_confidence FLOAT DEFAULT NULL,
+    suspicious_details VARCHAR(1000) DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE,
     INDEX idx_ai_file (file_id)

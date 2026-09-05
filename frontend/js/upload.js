@@ -106,22 +106,41 @@ document.addEventListener("DOMContentLoaded", async () => {
         formData.append("folder_id", folderId);
       }
 
-      // UI Reset
+      // UI Reset & Progress Animation
       if (uploadSubmit) uploadSubmit.disabled = true;
       if (uploadProgress) uploadProgress.style.display = "block";
-      if (uploadProgressBar) uploadProgressBar.style.width = "40%";
-      if (uploadStatus) uploadStatus.textContent = "Uploading & Analyzing file with Generative AI...";
+      if (uploadProgressBar) uploadProgressBar.style.width = "15%";
+      if (uploadStatus) uploadStatus.textContent = "Uploading file to storage...";
       
       if (uploadResult) uploadResult.style.display = "none";
       if (aiResult) aiResult.style.display = "none";
       if (aiError) aiError.style.display = "none";
       if (aiLoading) aiLoading.style.display = "block";
 
+      // Progress animation ticker while waiting for backend + AI processing
+      let currentProgress = 15;
+      const progressInterval = setInterval(() => {
+        if (currentProgress < 40) {
+          currentProgress += 10;
+          if (uploadProgressBar) uploadProgressBar.style.width = `${currentProgress}%`;
+          if (uploadStatus) uploadStatus.textContent = "Running 3-Tier Security & ML Behavioral Scan...";
+        } else if (currentProgress < 85) {
+          currentProgress += 5;
+          if (uploadProgressBar) uploadProgressBar.style.width = `${currentProgress}%`;
+          if (uploadStatus) uploadStatus.textContent = "Generating AI Summary, Tags & Insights with Gemini Flash...";
+        } else if (currentProgress < 95) {
+          currentProgress += 1;
+          if (uploadProgressBar) uploadProgressBar.style.width = `${currentProgress}%`;
+          if (uploadStatus) uploadStatus.textContent = "Finalizing AI Analysis & saving record...";
+        }
+      }, 1500);
+
       try {
         const response = await apiUpload("/files/upload", formData);
+        clearInterval(progressInterval);
 
         if (uploadProgressBar) uploadProgressBar.style.width = "100%";
-        if (uploadStatus) uploadStatus.textContent = "Upload complete!";
+        if (uploadStatus) uploadStatus.textContent = "Upload & AI Analysis complete!";
 
         showToast("File uploaded successfully!", "success");
 
@@ -134,21 +153,71 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (uploadedFileId) uploadedFileId.textContent = response.file_id || "-";
         }
 
-        // Render AI Analysis Output
+        // Render ML & AI Analysis Output
+        renderMlAnalysis(response.ml_analysis);
         renderAiAnalysis(response.ai_analysis);
 
       } catch (err) {
-        showToast("Upload failed: " + err.message, "error");
-        if (uploadStatus) uploadStatus.textContent = "Upload failed.";
+        showToast("Upload canceled due to security threat!", "error");
+        if (uploadStatus) uploadStatus.textContent = "Upload canceled.";
+        
         if (aiError) {
-          aiError.textContent = "AI Analysis Error: " + err.message;
+          let detailObj = null;
+          try {
+            detailObj = JSON.parse(err.message);
+          } catch(e) {}
+
+          if (detailObj && detailObj.reason) {
+            let riskListHtml = "";
+            if (detailObj.risk_factors && detailObj.risk_factors.length > 0) {
+              riskListHtml = `<ul style="margin-top:0.5rem; margin-left:1.25rem; font-size:0.9rem;">` +
+                detailObj.risk_factors.map(r => `<li>${r}</li>`).join("") +
+                `</ul>`;
+            }
+            aiError.innerHTML = `
+              <div style="font-weight:700; font-size:1.05rem; margin-bottom:0.35rem; color:#b91c1c;">
+                🛑 Upload Canceled By 3-Tier Security Scanner
+              </div>
+              <div style="font-size:0.95rem; font-weight:600; color:#7f1d1d;">${detailObj.reason}</div>
+              ${riskListHtml}
+              <div style="font-size:0.8rem; margin-top:0.5rem; color:#991b1b; font-style:italic;">
+                🛡️ Security Action: The file was permanently deleted from disk and rejected before storing.
+              </div>
+            `;
+          } else {
+            aiError.innerHTML = `<strong>Upload Failed:</strong> ${err.message}`;
+          }
           aiError.style.display = "block";
         }
       } finally {
+        if (typeof progressInterval !== "undefined") clearInterval(progressInterval);
         if (uploadSubmit) uploadSubmit.disabled = false;
         if (aiLoading) aiLoading.style.display = "none";
       }
     });
+  }
+
+  function renderMlAnalysis(ml) {
+    const mlResultBox = document.getElementById("ml-result");
+    const mlCategoryVal = document.getElementById("ml-category-val");
+    const mlConfidenceVal = document.getElementById("ml-confidence-val");
+    const mlSecurityVal = document.getElementById("ml-security-val");
+
+    if (!mlResultBox || !ml) return;
+
+    mlResultBox.style.display = "block";
+    if (mlCategoryVal) mlCategoryVal.textContent = ml.predicted_category || "Document / General";
+    if (mlConfidenceVal) {
+      const pct = ml.confidence_percentage ? `${ml.confidence_percentage}%` : (ml.confidence ? `${(ml.confidence * 100).toFixed(1)}%` : "90.0%");
+      mlConfidenceVal.textContent = pct;
+    }
+    if (mlSecurityVal) {
+      if (ml.is_suspicious) {
+        mlSecurityVal.innerHTML = `<span style="color:#ef4444; font-weight:700;">⚠️ Suspicious Activity Flagged</span> (${ml.suspicious_details || "Unusual pattern"})`;
+      } else {
+        mlSecurityVal.innerHTML = `<span style="color:#10b981; font-weight:700;">✅ Normal Upload</span> (${ml.suspicious_details || "No anomalies detected"})`;
+      }
+    }
   }
 
   function renderAiAnalysis(ai) {

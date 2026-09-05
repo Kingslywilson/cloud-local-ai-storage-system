@@ -5,6 +5,7 @@ from sqlalchemy import (
     BigInteger,
     DateTime,
     ForeignKey,
+    Float,
     func
 )
 from database import Base
@@ -169,6 +170,33 @@ class AIAnalysis(Base):
 
     insights = Column(
         String(3000),
+        nullable=True
+    )
+
+    # Machine Learning fields
+    ml_category = Column(
+        String(100),
+        nullable=True
+    )
+
+    ml_confidence = Column(
+        Float,
+        nullable=True
+    )
+
+    is_suspicious = Column(
+        Integer,
+        default=0,
+        nullable=True
+    )
+
+    suspicious_confidence = Column(
+        Float,
+        nullable=True
+    )
+
+    suspicious_details = Column(
+        String(1000),
         nullable=True
     )
 

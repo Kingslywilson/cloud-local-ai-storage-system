@@ -151,6 +151,21 @@
 
           <div id="ai-error" class="alert alert-danger" style="display:none; margin-top:1.5rem;"></div>
 
+          <!-- ML ANALYSIS RESULT CARD -->
+          <div id="ml-result" class="stat-card" style="display:none; margin-top:1.5rem; border-left:4px solid #6366f1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <h3 style="font-size:1rem; font-weight:700; color:var(--text-main); margin:0;">
+                🤖 Random Forest ML Prediction
+              </h3>
+              <span class="badge" style="background:#e0e7ff; color:#4338ca;">Random Forest ML</span>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; font-size:0.9rem;">
+              <div><strong>ML Classified Category:</strong> <span id="ml-category-val" style="color:#6366f1; font-weight:700;">-</span></div>
+              <div><strong>Category Confidence:</strong> <span id="ml-confidence-val" style="font-weight:600;">-</span></div>
+              <div style="grid-column: span 2;"><strong>Security Status:</strong> <span id="ml-security-val">-</span></div>
+            </div>
+          </div>
+
           <!-- AI RESULT CARD -->
           <div id="ai-result" class="ai-card" style="display:none;">
             <div class="ai-card-header">

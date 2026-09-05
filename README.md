@@ -289,13 +289,22 @@ BACKEND_URL=http://127.0.0.1:8000
 
 ---
 
-## 21. Machine Learning
-- **Status**: Planned Architecture for Next Phase (Not implemented in current task as specified).
-- **Integration Plan**:
+## 21. Machine Learning Module
+- **Status**: Fully Implemented & Backend Integrated.
+- **Algorithms**:
+  1. **Random Forest File Category Classifier**:
+     - Classifies uploaded files into `Document (PDF, DOC)`, `Image`, `Video`, `Audio`, or `Code Files`.
+     - Model serialized at `ML/models/file_classifier_random_forest.joblib`.
+     - Features: extension, MIME type, file size bytes, file size KB/MB.
+  2. **Random Forest Suspicious Upload Anomaly Detector V2**:
+     - Evaluates upload activity for security threats ( ATO / rapid bulk upload exfiltration / unusual file anomalies).
+     - Model serialized at `ML/models/suspicious_upload_random_forest_v2.joblib`.
+     - Features: file size, upload frequency, uploads in last hour, uploads in 24 hours, total user file count, access count, account age.
+- **Workflow**:
   ```text
-  Upload -> Metadata Extraction -> Random Forest Model -> Normal/Suspicious -> Gemini AI Analysis
+  Upload -> Metadata Extraction -> Random Forest ML Classification & Anomaly Detection -> Gemini GenAI Analysis -> DB Save & UI Render
   ```
-- Detailed feature vectors, dataset plan, and Random Forest classifier design are documented in `ML/README.md`.
+- **Jupyter Notebook**: Complete training pipeline, data preprocessing, and model evaluation notebook located at `ML/ML_File_Classification_and_Suspicious_Detection.ipynb`.
 
 ---
 

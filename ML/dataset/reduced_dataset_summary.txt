@@ -1,0 +1,14 @@
+Original dataset size: 54149
+Reduced dataset size: 1492
+
+Class distribution:
+Code: 499
+Document: 499
+Audio: 250
+Image: 145
+Video: 99
+
+Random seed: 42
+Train/test split: 80/20
+
+Original master dataset modified: NO

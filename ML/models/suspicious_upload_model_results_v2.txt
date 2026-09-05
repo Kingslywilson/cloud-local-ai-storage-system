@@ -1,0 +1,70 @@
+==================================================
+SUSPICIOUS UPLOAD DETECTION MODEL V2 RESULTS
+==================================================
+
+Dataset Information:
+-------------------
+Dataset Version  : V2 (Realistic Feature Overlap & Noise)
+Training samples : 2400
+Testing samples  : 600
+Train/Test Overlap: 0
+
+Training Class Distribution:
+label
+Normal        2040
+Suspicious     360
+
+Testing Class Distribution:
+label
+Normal        510
+Suspicious     90
+
+Model Configuration:
+-------------------
+Algorithm     : RandomForestClassifier
+n_estimators  : 300
+random_state  : 42
+class_weight  : balanced
+n_jobs        : -1
+
+Evaluation Results:
+-------------------
+Accuracy          : 0.9917
+Balanced Accuracy : 0.9814
+Macro Precision   : 0.9858
+Weighted Precision: 0.9916
+Macro Recall      : 0.9814
+Weighted Recall   : 0.9917
+Macro F1-score    : 0.9836
+Weighted F1-score : 0.9916
+
+Classification Report:
+---------------------
+              precision    recall  f1-score   support
+
+      Normal       0.99      1.00      1.00       510
+  Suspicious       0.98      0.97      0.97        90
+
+    accuracy                           0.99       600
+   macro avg       0.99      0.98      0.98       600
+weighted avg       0.99      0.99      0.99       600
+
+
+Confusion Matrix:
+----------------
+[[508   2]
+ [  3  87]]
+
+Top 10 Features:
+---------------
+           feature  importance
+   unique_ip_count    0.178368
+  uploads_last_24h    0.130524
+ uploads_last_hour    0.123413
+      access_count    0.119817
+      file_size_mb    0.109812
+  upload_frequency    0.103409
+  account_age_days    0.078094
+   user_file_count    0.068740
+file_extension_exe    0.015424
+ file_extension_py    0.008039

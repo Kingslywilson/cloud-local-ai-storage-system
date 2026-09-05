@@ -148,6 +148,48 @@
             </div>
           </div>
         </div>
+
+        <!-- ML CLASSIFICATION & ANOMALY DETECTION CARD -->
+        <div id="ml-analysis-section" style="margin-top: 1.5rem;">
+          <div class="stat-card" style="display:block; border-left: 4px solid #6366f1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem; flex-wrap:wrap; gap:0.5rem;">
+              <h3 style="font-size:1.1rem; font-weight:700; color:var(--text-main); margin:0;">
+                🤖 Machine Learning Module (Random Forest Classifier)
+              </h3>
+              <span id="ml-status-badge" class="badge" style="background:#e0e7ff; color:#4338ca; padding:0.3rem 0.75rem; border-radius:999px; font-weight:600; font-size:0.8rem;">
+                Scikit-Learn ML Integrated
+              </span>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
+              <!-- ML File Classification -->
+              <div style="background:var(--bg-secondary, #f8fafc); padding:1.25rem; border-radius:10px; border:1px solid var(--border-color, #e2e8f0);">
+                <div style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:0.5rem;">
+                  📁 ML File Classification
+                </div>
+                <div style="font-size:1.15rem; font-weight:700; color:var(--text-main); margin-bottom:0.35rem;" id="ml-category">
+                  Loading ML Category...
+                </div>
+                <div style="font-size:0.85rem; color:var(--text-muted);">
+                  Prediction Confidence: <strong id="ml-confidence" style="color:#6366f1;">-</strong>
+                </div>
+              </div>
+
+              <!-- ML Suspicious Upload Anomaly Detector -->
+              <div id="ml-security-box" style="background:var(--bg-secondary, #f8fafc); padding:1.25rem; border-radius:10px; border:1px solid var(--border-color, #e2e8f0);">
+                <div style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:0.5rem;">
+                  🛡️ Suspicious Behavior Detection
+                </div>
+                <div style="font-size:1.15rem; font-weight:700; color:var(--text-main); margin-bottom:0.35rem;" id="ml-security-status">
+                  Analyzing upload behavior...
+                </div>
+                <div style="font-size:0.85rem; color:var(--text-muted);" id="ml-security-details">
+                  Checking pattern anomaly metrics...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   </div>

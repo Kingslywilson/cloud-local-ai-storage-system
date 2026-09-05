@@ -14,6 +14,8 @@ from models import File, Folder, FileShare, AIAnalysis, User
 from schemas import ShareRequest, FileRename, FileMove
 from auth_utils import get_current_user, log_activity, SECRET_KEY, ALGORITHM
 from ai_analysis import analyze_file
+from ml_service import predict_file_classification, detect_suspicious_upload
+from security_service import perform_pre_storage_security_scan
 
 router = APIRouter(prefix="/files", tags=["Files"])
 
@@ -37,6 +39,7 @@ def format_file_dict(file: File, db: Session):
     share = db.query(FileShare).filter(FileShare.file_id == file.id, FileShare.is_active == 1).first()
 
     ai_dict = None
+    ml_dict = None
     if ai:
         ai_dict = {
             "summary": ai.summary,
@@ -44,6 +47,14 @@ def format_file_dict(file: File, db: Session):
             "tags": ai.tags,
             "insights": ai.insights,
             "created_at": ai.created_at
+        }
+        ml_dict = {
+            "predicted_category": ai.ml_category or "Unknown",
+            "confidence": ai.ml_confidence or 0.0,
+            "confidence_percentage": round((ai.ml_confidence or 0.0) * 100, 1),
+            "is_suspicious": bool(ai.is_suspicious),
+            "suspicious_confidence": ai.suspicious_confidence or 0.0,
+            "suspicious_details": ai.suspicious_details or "Normal upload"
         }
 
     return {
@@ -57,6 +68,7 @@ def format_file_dict(file: File, db: Session):
         "file_type": file.file_type,
         "uploaded_at": file.uploaded_at,
         "ai_analysis": ai_dict,
+        "ml_analysis": ml_dict,
         "share_token": share.share_token if share else None
     }
 
@@ -229,9 +241,52 @@ async def upload_file(
     contents = await file.read()
     file_size = len(contents)
 
+    # 1. Write file to disk temporarily for security inspection
     with open(file_save_path, "wb") as f:
         f.write(contents)
 
+    # 2. RUN 3-TIER PRE-STORAGE SECURITY SCAN
+    sec_scan = perform_pre_storage_security_scan(
+        file_path=str(file_save_path),
+        original_name=original_name,
+        content_type=file.content_type or "application/octet-stream",
+        file_size_bytes=file_size,
+        user_id=current_user.id,
+        db=db
+    )
+
+    # 3. IF SUSPICIOUS OR HIGH THREAT -> DELETE FILE AND CANCEL UPLOAD STRICTLY!
+    if sec_scan.get("is_suspicious"):
+        if os.path.exists(file_save_path):
+            try:
+                os.remove(file_save_path)
+            except Exception as e:
+                print("Error removing suspicious file:", e)
+
+        cancellation_reason = sec_scan.get("cancellation_reason") or "Upload Canceled Due to Security Threat"
+        risk_factors = sec_scan.get("risk_factors", [])
+
+        # Log security rejection
+        log_activity(
+            db,
+            user_id=current_user.id,
+            action="UPLOAD_BLOCKED",
+            file_id=None,
+            file_name=original_name,
+            details=f"SECURITY REJECTION: {cancellation_reason}. Risk Factors: {', '.join(risk_factors)}"
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "Upload Canceled",
+                "reason": cancellation_reason,
+                "risk_factors": risk_factors,
+                "security_status": sec_scan.get("security_status")
+            }
+        )
+
+    # 4. IF CLEAN -> SAVE FILE RECORD TO DATABASE & PROCEED
     file_record = File(
         user_id=current_user.id,
         folder_id=target_folder_id,
@@ -256,9 +311,18 @@ async def upload_file(
         details=f"Uploaded file ({file_size} bytes)"
     )
 
-    # Perform AI Analysis safely
+    # Perform ML & AI Analysis safely
     ai_result = None
+    ml_result = None
     try:
+        # 1. ML File Classification
+        ml_class = predict_file_classification(
+            original_name=original_name,
+            file_type=file.content_type or "application/octet-stream",
+            file_size_bytes=file_size
+        )
+
+        # 2. GenAI File Summarization & Metadata Generation
         analysis_data = analyze_file(
             file_path=str(file_save_path),
             file_name=original_name,
@@ -270,7 +334,12 @@ async def upload_file(
             summary=analysis_data.get("summary", ""),
             description=analysis_data.get("description", ""),
             tags=str(analysis_data.get("tags", "[]")),
-            insights=analysis_data.get("insights", "")
+            insights=analysis_data.get("insights", ""),
+            ml_category=ml_class.get("predicted_category"),
+            ml_confidence=ml_class.get("confidence"),
+            is_suspicious=0,
+            suspicious_confidence=0.0,
+            suspicious_details="Clean upload verified"
         )
         db.add(ai_record)
         db.commit()
@@ -282,14 +351,30 @@ async def upload_file(
             "tags": ai_record.tags,
             "insights": ai_record.insights
         }
+        ml_result = {
+            "predicted_category": ai_record.ml_category,
+            "confidence": ai_record.ml_confidence,
+            "confidence_percentage": round((ai_record.ml_confidence or 0.0) * 100, 1),
+            "is_suspicious": False,
+            "suspicious_confidence": 0.0,
+            "suspicious_details": "Clean upload verified by 3-tier security scanner"
+        }
 
     except Exception as e:
-        print("Error during AI analysis:", e)
+        print("Error during AI/ML analysis:", e)
         ai_result = {
             "summary": "AI analysis could not be completed at this time.",
             "description": "You can retry later.",
             "tags": "[]",
             "insights": ""
+        }
+        ml_result = {
+            "predicted_category": "Other",
+            "confidence": 0.0,
+            "confidence_percentage": 0.0,
+            "is_suspicious": False,
+            "suspicious_confidence": 0.0,
+            "suspicious_details": "ML analysis pending"
         }
 
     return {
@@ -299,7 +384,19 @@ async def upload_file(
         "file_type": file_record.file_type,
         "file_size": file_record.file_size,
         "uploaded_at": file_record.uploaded_at,
-        "ai_analysis": ai_result
+        "ai_analysis": ai_result,
+        "ml_analysis": ml_result
+    }
+
+    return {
+        "message": "File uploaded successfully",
+        "file_id": file_record.id,
+        "file_name": file_record.original_name,
+        "file_type": file_record.file_type,
+        "file_size": file_record.file_size,
+        "uploaded_at": file_record.uploaded_at,
+        "ai_analysis": ai_result,
+        "ml_analysis": ml_result
     }
 
 
@@ -406,7 +503,15 @@ def get_ai_analysis(
         "description": analysis.description,
         "tags": analysis.tags,
         "insights": analysis.insights,
-        "created_at": analysis.created_at
+        "created_at": analysis.created_at,
+        "ml_analysis": {
+            "predicted_category": analysis.ml_category or "Unknown",
+            "confidence": analysis.ml_confidence or 0.0,
+            "confidence_percentage": round((analysis.ml_confidence or 0.0) * 100, 1),
+            "is_suspicious": bool(analysis.is_suspicious),
+            "suspicious_confidence": analysis.suspicious_confidence or 0.0,
+            "suspicious_details": analysis.suspicious_details or "Normal upload behavior"
+        }
     }
 
 

@@ -1,0 +1,42 @@
+==================================================
+SUSPICIOUS UPLOAD DETECTION DATASET V2 SUMMARY
+==================================================
+
+DISCLAIMER:
+This dataset is a SYNTHETIC/SIMULATED behavioral dataset V2 designed to model
+realistic multi-dimensional user behaviors and security threat scenarios.
+Feature distributions between Normal and Suspicious records intentionally contain
+realistic continuous overlap to model production environment complexity.
+
+Total Dataset Size: 3000
+Training Set Size : 2400 (80%)
+Testing Set Size  : 600 (20%)
+
+Overall Class Distribution:
+  Normal    : 2550
+  Suspicious: 450
+
+Training Set Distribution:
+  Normal    : 2040
+  Suspicious: 360
+
+Testing Set Distribution:
+  Normal    : 510
+  Suspicious: 90
+
+Behavioral Features (9):
+  - file_size_mb
+  - file_extension
+  - upload_frequency
+  - uploads_last_hour
+  - uploads_last_24h
+  - user_file_count
+  - access_count
+  - unique_ip_count
+  - account_age_days
+
+Target Column:
+  label ("Normal" / "Suspicious")
+
+Random Seed: 42
+Train/Test Split: 80/20 Stratified

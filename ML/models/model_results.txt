@@ -1,0 +1,56 @@
+==================================================
+RANDOM FOREST FILE CLASSIFICATION MODEL RESULTS
+==================================================
+
+Dataset Information:
+-------------------
+Training samples: 1193
+Testing samples : 299
+
+Training Class Distribution:
+category
+Document    399
+Code        399
+Audio       200
+Image       116
+Video        79
+
+Testing Class Distribution:
+category
+Document    100
+Code        100
+Audio        50
+Image        29
+Video        20
+
+Model Configuration:
+-------------------
+Algorithm     : RandomForestClassifier
+n_estimators  : 300
+random_state  : 42
+class_weight  : balanced
+n_jobs        : -1
+
+Evaluation Results:
+-------------------
+Accuracy          : 1.0000
+Balanced Accuracy : 1.0000
+Macro Precision   : 1.0000
+Macro Recall      : 1.0000
+Macro F1-score    : 1.0000
+Weighted F1-score : 1.0000
+
+Classification Report:
+---------------------
+              precision    recall  f1-score   support
+
+       Audio       1.00      1.00      1.00        50
+        Code       1.00      1.00      1.00       100
+    Document       1.00      1.00      1.00       100
+       Image       1.00      1.00      1.00        29
+       Video       1.00      1.00      1.00        20
+
+    accuracy                           1.00       299
+   macro avg       1.00      1.00      1.00       299
+weighted avg       1.00      1.00      1.00       299
+
